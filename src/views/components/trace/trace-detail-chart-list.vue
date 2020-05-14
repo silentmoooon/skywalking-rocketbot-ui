@@ -19,50 +19,88 @@
   <div class="time-charts scroll_hide">
     <div class="rk-trace-t-loading" v-show="loading">
       <svg class="icon loading">
-        <use xlink:href="#spinner"></use>
+        <use xlink:href="#spinner" />
       </svg>
     </div>
     <transition-group name="fade" tag="a" class="mb-5">
-      <span class="time-charts-item mr-10" v-for="(i,index) in list" :key="i" :style="`color:${computedScale(index)}`">
-         <svg class="icon vm mr-5 sm">
-            <use xlink:href="#issue-open-m"></use>
-          </svg>
+      <span
+        class="time-charts-item mr-10"
+        v-for="(i,index) in list"
+        :key="i"
+        :style="`color:${computedScale(index)}`"
+      >
+        <svg class="icon vm mr-5 sm">
+          <use xlink:href="#issue-open-m" />
+        </svg>
         <span>{{i}}</span>
       </span>
     </transition-group>
-    <a class="rk-btn r vm  tc" @click="downloadTrace">{{$t('exportImage')}}</a>
+    <a class="rk-btn r vm tc" @click="downloadTrace">{{$t('exportImage')}}</a>
     <rk-sidebox :width="'50%'" :show.sync="showDetail" :title="$t('spanInfo')">
       <div class="rk-trace-detail">
         <h5 class="mb-15">{{$t('tags')}}.</h5>
-        <div class="mb-10 clear"><span class="g-sm-4 grey">{{$t('endpoint')}}:</span><span class="g-sm-8 wba">{{this.currentSpan.label}}</span></div>
-        <div class="mb-10 clear"><span class="g-sm-4 grey">{{$t('spanType')}}:</span><span class="g-sm-8 wba">{{this.currentSpan.type}}</span></div>
-        <div class="mb-10 clear"><span class="g-sm-4 grey">{{$t('component')}}:</span><span class="g-sm-8 wba">{{this.currentSpan.component}}</span></div>
-        <div class="mb-10 clear"><span class="g-sm-4 grey">Peer:</span><span class="g-sm-8 wba">{{this.currentSpan.peer||'No Peer'}}</span></div>
-        <div class="mb-10 clear"><span class="g-sm-4 grey">{{$t('error')}}:</span><span class="g-sm-8 wba">{{this.currentSpan.isError}}</span></div>
+        <div class="mb-10 clear">
+          <span class="g-sm-4 grey">{{$t('endpoint')}}:</span>
+          <span class="g-sm-8 wba">{{this.currentSpan.label}}</span>
+        </div>
+        <div class="mb-10 clear">
+          <span class="g-sm-4 grey">{{$t('spanType')}}:</span>
+          <span class="g-sm-8 wba">{{this.currentSpan.type}}</span>
+        </div>
+        <div class="mb-10 clear">
+          <span class="g-sm-4 grey">{{$t('component')}}:</span>
+          <span class="g-sm-8 wba">{{this.currentSpan.component}}</span>
+        </div>
+        <div class="mb-10 clear">
+          <span class="g-sm-4 grey">Peer:</span>
+          <span class="g-sm-8 wba">{{this.currentSpan.peer||'No Peer'}}</span>
+        </div>
+        <div class="mb-10 clear">
+          <span class="g-sm-4 grey">{{$t('error')}}:</span>
+          <span class="g-sm-8 wba">{{this.currentSpan.isError}}</span>
+        </div>
         <div class="mb-10 clear" v-for="i in this.currentSpan.tags" :key="i.key">
           <span class="g-sm-4 grey">{{i.key}}:</span>
           <span class="g-sm-8 wba">
             {{i.value}}
-            <svg v-if="i.key==='db.statement'" class="icon vm grey link-hover cp ml-5" @click="copy(i.value)">
-              <use xlink:href="#review-list"></use>
+            <svg
+              v-if="i.key==='db.statement'"
+              class="icon vm grey link-hover cp ml-5"
+              @click="copy(i.value)"
+            >
+              <use xlink:href="#review-list" />
             </svg>
           </span>
         </div>
-        <h5 class="mb-10" v-if="this.currentSpan.logs" v-show="this.currentSpan.logs.length">{{$t('logs')}}.</h5>
+        <h5
+          class="mb-10"
+          v-if="this.currentSpan.logs"
+          v-show="this.currentSpan.logs.length"
+        >{{$t('logs')}}.</h5>
         <div v-for="(i, index) in this.currentSpan.logs" :key="index">
-          <div class="mb-10 sm"><span class="mr-10">{{$t('time')}}:</span><span class="grey">{{i.time | dateformat}}</span></div>
+          <div class="mb-10 sm">
+            <span class="mr-10">{{$t('time')}}:</span>
+            <span class="grey">{{i.time | dateformat}}</span>
+          </div>
           <div class="mb-15 clear" v-for="(_i, _index) in i.data" :key="_index">
-            <div class="mb-10">{{_i.key}}:<span v-if="_i.key==='stack'" class="r rk-sidebox-magnify"
-                                                @click="showCurrentSpanDetail(_i.key, _i.value)">
-          <svg class="icon">
-            <use xlink:href="#magnify"></use>
-          </svg>
-        </span></div><pre class="pl-15 mt-0 mb-0 sm oa" >{{_i.value}}</pre>
+            <div class="mb-10">
+              {{_i.key}}:
+              <span
+                v-if="_i.key==='stack'"
+                class="r rk-sidebox-magnify"
+                @click="showCurrentSpanDetail(_i.key, _i.value)"
+              >
+                <svg class="icon">
+                  <use xlink:href="#magnify" />
+                </svg>
+              </span>
+            </div>
+            <pre class="pl-15 mt-0 mb-0 sm oa">{{_i.value}}</pre>
           </div>
         </div>
       </div>
     </rk-sidebox>
-    <v-dialog width="90%"/>
+    <v-dialog width="90%" />
     <div class="trace-list">
       <div ref="traceList"></div>
     </div>
@@ -135,6 +173,14 @@ export default {
       .interpolator(d3.interpolateCool);
       return sequentialScale(i);
     },
+    getMQSendTime(mqSendList,queue){
+        for( let i = mqSendList.length - 1; i >= 0; i-- ){
+            if(mqSendList[i].queue === queue){
+              return mqSendList[i].time;
+            }
+        }
+        return 0;
+    },
     changeTree() {
       if (this.data.length === 0) {
         return [];
@@ -145,10 +191,29 @@ export default {
       const segmentIdGroup = [];
       const fixSpans = [];
       const segmentHeaders = [];
+      let mqSendList = [];
+
       this.data.forEach((span) => {
         if (span.parentSpanId === -1) {
           segmentHeaders.push(span);
+          if(span.component==="activemq-consumer"&&!span.delayFlag){
+            let queue=span.endpointName.split("/")[2];
+            let lastTime=this.getMQSendTime(mqSendList,queue);
+            if(lastTime > 0){
+              let tag={};
+              tag.key="delay";
+              tag.value=span.startTime-lastTime+"ms";
+              span.tags.push(tag);
+              span.delayFlag=true;
+            }
+          }
         } else {
+           if(span.component==="activemq-producer"){
+              let mqInfo={};
+              mqInfo.time=span.startTime;
+              mqInfo.queue=span.endpointName.split("/")[2];
+              mqSendList.push(mqInfo);
+          }
           const index = this.data.findIndex((i) => (
             i.segmentId === span.segmentId
             &&
@@ -344,44 +409,46 @@ export default {
 };
 </script>
 <style lang="scss">
-.time-charts{
+.time-charts {
   overflow: auto;
   padding: 10px 30px;
   position: relative;
-  min-height: 150px;  
+  min-height: 150px;
 }
 .trace-node .group {
   cursor: pointer;
   fill-opacity: 0;
 }
-.trace-node-container{
+.trace-node-container {
   fill: rgba(0, 0, 0, 0);
   stroke-width: 5px;
   cursor: pointer;
-  &:hover{
-    fill: rgba(0,0,0,0.05)
+  &:hover {
+    fill: rgba(0, 0, 0, 0.05);
   }
 }
-.trace-node  .node-text {
+.trace-node .node-text {
   font: 12.5px sans-serif;
   pointer-events: none;
 }
-.domain{display: none;}
-.time-charts-item{
+.domain {
+  display: none;
+}
+.time-charts-item {
   display: inline-block;
   padding: 2px 8px;
   border: 1px solid;
   font-size: 11px;
   border-radius: 4px;
 }
- .trace-list{
-   fill: rgba(0,0,0,0)
- }
- .trace-list .trace-node rect{
-   &:hover{
-     fill: rgba(0,0,0,0.05)
-   }
- }
+.trace-list {
+  fill: rgba(0, 0, 0, 0);
+}
+.trace-list .trace-node rect {
+  &:hover {
+    fill: rgba(0, 0, 0, 0.05);
+  }
+}
 .dialog-c-text {
   white-space: pre;
   overflow: auto;
