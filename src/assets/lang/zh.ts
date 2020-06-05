@@ -62,7 +62,7 @@ const m = {
   instance: "实例",
   endpoint: "端点",
   database: "数据库",
-  databaseaccess: "SQL",
+  sqlaccess: "SQL",
   cache: "存储器",
   global: "全局",
   serviceendpoint: "服务端点",
