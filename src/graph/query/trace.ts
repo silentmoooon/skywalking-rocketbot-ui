@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-import { Traces, Trace, ServiceInstanceOption } from '../fragments/trace';
+import { Traces,TraceByTime, Trace, ServiceInstanceOption } from '../fragments/trace';
 
 export const queryTraces =
   `query queryTraces(${Traces.variable}) {${Traces.query}}`;
+export const queryTraceByTime =
+`query queryTraceByTime(${TraceByTime.variable}) {${TraceByTime.query}}`;
 
 export const queryTrace =
   `query queryTrace(${Trace.variable}) {${Trace.query}}`;

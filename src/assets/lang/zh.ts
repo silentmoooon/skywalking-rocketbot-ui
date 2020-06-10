@@ -70,6 +70,8 @@ const m = {
   status: "状态",
   endpointName: "端点名称",
   search: "搜索",
+  exportTrace: "导出",
+  imortTrace: "导入",
   clear: "清空",
   more: "更多",
   traceID: "追踪ID",

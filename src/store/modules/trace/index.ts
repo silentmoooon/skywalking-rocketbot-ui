@@ -26,8 +26,10 @@ export interface State {
   services: Option[];
   instances: Option[];
   traceForm: any;
+  traceByTimeForm: any;
   traceList: Trace[];
   traceTotal: number;
+  traceListByTime: Trace[];
   traceSpans: Span[];
   currentTrace: Trace;
 }
@@ -39,8 +41,10 @@ const initState: State = {
     paging: {pageNum: 1, pageSize: 15, needTotal: true},
     queryOrder: localStorage.getItem('traceQueryOrder') || 'BY_DURATION',
   },
+  traceByTimeForm: {},
   traceList: [],
   traceTotal: 0,
+  traceListByTime: [],
   traceSpans: [],
   currentTrace: {
     operationNames: [],
@@ -74,6 +78,12 @@ const mutations: MutationTree<State> = {
     }
     state.traceForm = data;
   },
+  [types.SET_TRACEBYTIME_FORM](state: State, data: any): void {
+    if (data) {
+      state.traceByTimeForm = data;
+    }
+   
+  },
   [types.SET_TRACE_FORM_ITEM](state: State, params: any): void {
     if (params.type && params.type === 'queryOrder') {
       if (params.data === '') {
@@ -90,6 +100,9 @@ const mutations: MutationTree<State> = {
   },
   [types.SET_TRACELIST_TOTAL](state: State, data: number): void {
     state.traceTotal = data;
+  },
+  [types.SET_TRACELISTBYTIME](state: State, data: Trace[]): void {
+    state.traceListByTime = data;
   },
   [types.SET_TRACE_SPANS](state: State, data: Span[]): void {
     state.traceSpans = data;
@@ -130,6 +143,9 @@ const actions: ActionTree<State, any> = {
   SET_TRACE_FORM(context: { commit: Commit, dispatch: Dispatch }, params: any): void {
     context.commit(types.SET_TRACE_FORM, params);
   },
+  SET_TRACEBYTIME_FORM(context: { commit: Commit, dispatch: Dispatch }, params: any): void {
+    context.commit(types.SET_TRACEBYTIME_FORM, params);
+  },
   GET_TRACELIST(context: { state: State, commit: Commit }): Promise<void> {
     context.commit(types.SET_TRACELIST, []);
     return graph
@@ -138,6 +154,16 @@ const actions: ActionTree<State, any> = {
       .then((res: AxiosResponse) => {
         context.commit(types.SET_TRACELIST, res.data.data.traces.data);
         context.commit(types.SET_TRACELIST_TOTAL, res.data.data.traces.total);
+      });
+  },
+  GET_TRACELISTBYTIME(context: { state: State, commit: Commit }): Promise<void> {
+    context.commit(types.SET_TRACELISTBYTIME, []);
+    return graph
+      .query('queryTraceByTime')
+      .params({condition: context.state.traceByTimeForm})
+      .then((res: AxiosResponse) => {
+        context.commit(types.SET_TRACELISTBYTIME, res.data.data.traces);
+        context.commit(types.SET_TRACELISTBYTIME_TOTAL, res.data.data.traces.length);
       });
   },
   GET_TRACE_SPANS(context: { commit: Commit }, params: any): Promise<void> {

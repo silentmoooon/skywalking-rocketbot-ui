@@ -81,3 +81,42 @@ export const Trace = {
     }
   }
   `};
+
+  export const TraceByTime = {
+    variable: '$condition: Duration',
+    query: `
+    traces: queryTraceByTime(condition: $condition) {
+      spans {
+        traceId
+        segmentId
+        spanId
+        parentSpanId
+        refs {
+          traceId
+          parentSegmentId
+          parentSpanId
+          type
+        }
+        serviceCode
+        startTime
+        endTime
+        endpointName
+        type
+        peer
+        component
+        isError
+        layer
+        tags {
+          key
+          value
+        }
+        logs {
+          time
+          data {
+            key
+            value
+          }
+        }
+      }
+    }
+      `};
